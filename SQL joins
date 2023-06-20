@@ -1,0 +1,52 @@
+
+#Sukuria lentele su gavejo siuntu informacija.
+SELECT gavejas.id,
+gavejas.vardas AS 'Vardas', 
+gavejas.pavarde AS 'Pavardė', 
+siunta.id AS 'Siuntos ID', 
+siunta.dydis AS 'Siuntos dydis', 
+gavejas.tel_numeris AS 'Telefono Numeris',
+siuntos_istorija.komentaras AS 'Busena',
+skyrelio_siuntos.skyrelio_id AS 'Skyrelio numeris', 
+skyrelis.pastomato_id AS 'Pastomato ID',
+pastomatas.pavadinimas AS 'Pastomato pavadinimas',
+miestas.pavadinimas AS 'Miestas', 
+rajonas.pavadinimas AS 'Rajonas'
+FROM gavejas
+INNER JOIN siunta ON gavejas.id = siunta.gavejo_id
+INNER JOIN siuntos_istorija ON siunta.id = siuntos_istorija.siuntos_id
+LEFT JOIN skyrelio_siuntos ON siunta.id = skyrelio_siuntos.siuntos_id
+LEFT JOIN skyrelis ON skyrelis.id = skyrelio_siuntos.skyrelio_id
+LEFT JOIN pastomatas ON pastomatas.id = skyrelis.pastomato_id
+LEFT JOIN miestas ON miestas.id = pastomatas.miesto_id
+LEFT JOIN rajonas ON rajonas.id = miestas.rajono_id;
+
+SELECT rajonas.id,
+rajonas.Pavadinimas AS 'Rajonas',
+miestas.pavadinimas AS 'Miestas',
+pastomatas.pavadinimas AS'Pastomato Pavadinimas',
+pastomatas.darbo_laikas AS 'Darbo Laikas',
+pastomatas.aktyvus AS 'Veikia/Neveikia(1/0)'
+FROM rajonas
+INNER JOIN miestas ON rajonas.id = miestas.rajono_id and rajonas.id = 1
+INNER JOIN pastomatas ON miestas.id = pastomatas.miesto_id;
+
+#Sukuriama lentele, kurioje patalpinami rajono turimi pastomatai
+SELECT rajonas.id,
+rajonas.Pavadinimas AS 'Rajonas',
+miestas.pavadinimas AS 'Miestas',
+pastomatas.pavadinimas AS'Pastomato Pavadinimas',
+pastomatas.darbo_laikas AS 'Darbo Laikas',
+pastomatas.aktyvus AS 'Veikia/Neveikia(1/0)'
+FROM rajonas
+INNER JOIN miestas ON rajonas.id = miestas.rajono_id and rajonas.id = 3
+INNER JOIN pastomatas ON miestas.id = pastomatas.miesto_id;
+
+#Sukuria lentele, kurioje patalpinami pastomato turimi skyreliai
+ SELECT pastomatas.id AS 'pastomato id',
+ pastomatas.pavadinimas AS 'pastomato pavadinimas',
+ skyrelis.id AS 'Skyrelio id'
+ FROM skyrelis
+ JOIN pastomatas ON skyrelis.pastomato_id = pastomatas.id and pastomatas.id=1;
+ 
+
