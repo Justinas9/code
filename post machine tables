@@ -1,0 +1,110 @@
+DROP DATABASE IF EXISTS pastomatai;
+CREATE DATABASE IF NOT EXISTS pastomatai CHARSET utf8mb4 collate utf8mb4_unicode_ci;
+USE pastomatai;
+
+DROP TABLE IF EXISTS klientas;
+CREATE TABLE klientas (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    vardas VARCHAR(50) NOT NULL,
+    pavarde VARCHAR(50) NOT NULL,
+    slaptazodis VARCHAR(50) NOT NULL,
+    el_pastas VARCHAR(50) UNIQUE,
+    tel_numeris VARCHAR(50) UNIQUE
+);
+
+DROP TABLE IF EXISTS gavejas;
+CREATE TABLE gavejas (  
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
+    vardas VARCHAR(50) NOT NULL,
+    pavarde VARCHAR(50) NOT NULL,                   
+    kliento_id INT UNSIGNED NOT NULL,
+    el_pastas VARCHAR(50) UNIQUE,
+    tel_numeris VARCHAR(50) UNIQUE,
+	constraint FK_klientas_gavejas FOREIGN KEY (kliento_id) REFERENCES klientas(id)
+);
+
+DROP TABLE IF EXISTS siunta;
+CREATE TABLE siunta (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    gavejo_id INT UNSIGNED NOT NULL,
+    dydis VARCHAR(50) NOT NULL,
+    kaina TINYINT UNSIGNED NOT NULL,
+    data1 DATE NOT NULL,
+    constraint FK_gavejo_siunta FOREIGN KEY (gavejo_id) REFERENCES gavejas(id)
+);
+
+DROP TABLE IF EXISTS siuntos_istorija;
+CREATE TABLE siuntos_istorija (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    siuntos_id INT UNSIGNED NOT NULL,
+    komentaras TEXT,
+    laikas DATETIME NOT NULL,
+    constraint FK_siuntos_siuntos_istorija FOREIGN KEY (siuntos_id) REFERENCES siunta(id)
+);
+
+DROP TABLE IF EXISTS rajonas;
+CREATE TABLE rajonas (
+    id TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    pavadinimas VARCHAR(50) NOT NULL
+);
+
+DROP TABLE IF EXISTS miestas;
+CREATE TABLE miestas (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    rajono_id TINYINT UNSIGNED NOT NULL,
+    pavadinimas VARCHAR(50) NOT NULL,
+	constraint FK_miesto_rajonas FOREIGN KEY (rajono_id) REFERENCES rajonas(id)
+);
+
+DROP TABLE IF EXISTS pastomatas;
+CREATE TABLE pastomatas (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	miesto_id INT UNSIGNED NOT NULL,
+    pavadinimas VARCHAR(50) NOT NULL,
+    adresas VARCHAR(225) NOT NULL,
+	darbo_laikas TEXT,
+    aktyvus BOOL NOT NULL,
+	constraint FK_pastomato_miestas FOREIGN KEY (miesto_id) REFERENCES miestas(id)
+);
+
+DROP TABLE IF EXISTS skyrelio_dydis;
+CREATE TABLE skyrelio_dydis (
+	id TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	matmenys VARCHAR(225) NOT NULL,
+    pavadinimas VARCHAR(50) NOT NULL
+);
+
+DROP TABLE IF EXISTS skyrelis;
+CREATE TABLE skyrelis (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	pastomato_id INT UNSIGNED NOT NULL,
+    skyrelio_dydis_id TINYINT UNSIGNED NOT NULL,
+	constraint FK_skyrelio_pastomatas FOREIGN KEY (pastomato_id) REFERENCES pastomatas(id),
+    constraint FK_skyrelio_dydis FOREIGN KEY (skyrelio_dydis_id) REFERENCES skyrelio_dydis(id)
+);
+
+DROP TABLE IF EXISTS skyrelio_siuntos;
+CREATE TABLE skyrelio_siuntos (
+    skyrelio_id INT UNSIGNED NOT NULL,
+    siuntos_id INT UNSIGNED NOT NULL,
+	data_patalpinimo DATE,
+    data_atsiemimo DATE,
+    kodas VARCHAR(50) NOT NULL,
+	constraint PK_skyrelio_siuntos PRIMARY KEY (skyrelio_id, siuntos_id),
+	constraint FK_siuntos_skyrelio_siuntos FOREIGN KEY (siuntos_id) REFERENCES siunta(id),
+	constraint FK_skyrelio_skyrelio_siuntos FOREIGN KEY (skyrelio_id) REFERENCES skyrelis(id)
+);
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
